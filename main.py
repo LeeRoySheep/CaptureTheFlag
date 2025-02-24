@@ -6,7 +6,7 @@ def get_flags_dict_from_wikipedia():
     """
     Fetches country flag images using Wikipedia API and correctly matches them to country names.
     """
-    wiki = wikipediaapi.Wikipedia("Lesheep666 (https://github.com/Lesheep666)", "de")  # Set user agent and language
+    wiki = wikipediaapi.Wikipedia("Lesheep666", "de")  # Set user agent and language
     page = wiki.page("Liste_der_Nationalflaggen")  # Wikipedia page for national flags
 
     if not page.exists():
