@@ -1,7 +1,4 @@
 import sys
- from PyQt6.QtGui import QPixmap
-
-
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
     QApplication,
@@ -25,7 +22,7 @@ class MainWindow(QMainWindow):
 
         self.setWindowTitle("My App")
 
-        widget = QLabel("Hello")
+        widget = QLabel("Welches Land sehen Sie")
         font = widget.font()
         font.setPointSize(30)
         widget.setFont(font)
@@ -35,6 +32,6 @@ class MainWindow(QMainWindow):
 
 app = QApplication(sys.argv)
 w = MainWindow()
-widget.setPixmap(QPixmap('otje.jpg'))
+
 w.show()
 app.exec()
