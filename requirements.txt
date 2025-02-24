@@ -1,0 +1,6 @@
+PIL
+requests
+PyQt6
+QtGui
+QtCore
+QtWidgets

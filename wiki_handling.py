@@ -1,33 +1,40 @@
-from PyQt6.QtWidgets import QApplication, QMainWindow, QLabel, QLineEdit, QVBoxLayout, QWidget
-
 import sys
+ from PyQt6.QtGui import QPixmap
 
+
+from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import (
+    QApplication,
+    QCheckBox,
+    QComboBox,
+    QDial,
+    QDoubleSpinBox,
+    QLabel,
+    QLineEdit,
+    QListWidget,
+    QMainWindow,
+    QSlider,
+    QSpinBox,
+)
+import test
 
 class MainWindow(QMainWindow):
+
     def __init__(self):
         super().__init__()
 
         self.setWindowTitle("My App")
 
-        self.label = QLabel()
+        widget = QLabel("Hello")
+        font = widget.font()
+        font.setPointSize(30)
+        widget.setFont(font)
+        widget.setAlignment(Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignVCenter)
 
-        self.input = QLineEdit()
-        self.input.textChanged.connect(self.label.setText)
-
-        layout = QVBoxLayout()
-        layout.addWidget(self.input)
-        layout.addWidget(self.label)
-
-        container = QWidget()
-        container.setLayout(layout)
-
-        # Set the central widget of the Window.
-        self.setCentralWidget(container)
-
+        self.setCentralWidget(widget)
 
 app = QApplication(sys.argv)
-
-window = MainWindow()
-window.show()
-
+w = MainWindow()
+widget.setPixmap(QPixmap('otje.jpg'))
+w.show()
 app.exec()

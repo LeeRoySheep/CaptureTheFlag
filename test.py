@@ -26,12 +26,23 @@ countries = [country[13:-5] for country in countries_mal]
 
 response = requests.get(f'https://{flag_links[0]}')
 
+
+
+
+def  get_image_to_flag(country, flags_dictionary):
+    """
+    function that gets a country string and a flag dictionary with 
+    keys as country strings and values as imagees
+    """
+    if country in flags_dictionary.keys():
+        return flags_dictionary[country]
+    else:
+        print("Sorry country not from list or failed to fetch from Wikipedia api.")
 if response.status_code == 200:
     # reading png image file 
     im = Image.open(BytesIO(response.content))
      # show image 
-    im.show()
-    print(f'{countries[0]}File downloaded successfully')
 else:
     print('Failed to download file')
+
 
