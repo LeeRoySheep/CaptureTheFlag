@@ -1,0 +1,88 @@
+import sqlite3
+import urllib.request
+from html.parser import HTMLParser
+
+# Schritt 1: Erstellen der SQLite-Datenbank
+def create_database():
+    """Erstellt eine SQLite-Datenbank und eine Tabelle für die Länderinformationen."""
+    conn = sqlite3.connect('countries.db')
+    c = conn.cursor()
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS countries (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            country_name TEXT,
+            capital TEXT,
+            population INTEGER
+        )
+    ''')
+    conn.commit()
+    conn.close()
+
+# Schritt 2: Einfügen der Länderinformationen in die Datenbank
+def insert_country_data(country_name, capital, population):
+    """Fügt die Länderinformationen in die Datenbank ein."""
+    conn = sqlite3.connect('countries.db')
+    c = conn.cursor()
+    c.execute('''
+        INSERT INTO countries (country_name, capital, population)
+        VALUES (?, ?, ?)
+    ''', (country_name, capital, population))
+    conn.commit()
+    conn.close()
+
+# Schritt 3: Abrufen der Länder-, Hauptstadt- und Einwohnerdaten
+def get_country_data():
+    """Ruft die Länder-, Hauptstadt- und Einwohnerdaten von Wikipedia ab und speichert sie in der Datenbank."""
+    url = "https://de.wikipedia.org/wiki/Liste_der_Länder_nach_Einwohnerzahl"
+    
+    # Abrufen der Seite mit urllib
+    response = urllib.request.urlopen(url)
+    html = response.read().decode('utf-8')
+
+    # Verwenden von HTMLParser, um HTML-Tags zu extrahieren
+    parser = HTMLParser()
+    country_data = []
+    start = 0
+    while True:
+        # Suche nach Ländernamen
+        start = html.find('<a href="/wiki/', start)
+        if start == -1:
+            break
+        
+        end = html.find('"', start + 15)
+        country_name = html[start + 15:end]
+        country_name = parser.unescape(country_name)  # Entschlüsselung der HTML-Sonderzeichen
+
+        # Suche nach Hauptstädten und Bevölkerungszahlen
+        start = html.find('<td>', end)
+        end = html.find('</td>', start)
+        capital = html[start + 4:end]
+        capital = parser.unescape(capital)
+
+        start = html.find('<td>', end)
+        end = html.find('</td>', start)
+        population = html[start + 4:end]
+        population = parser.unescape(population).replace(' ', '').replace('.', '')  # Entfernen von Leerzeichen und Punkten
+
+        if population.isdigit():  # Sicherstellen, dass die Bevölkerung eine gültige Zahl ist
+            population = int(population)
+            insert_country_data(country_name, capital, population)
+
+# Schritt 4: Ausgabe der Daten
+def main():
+    create_database()  # Datenbank erstellen
+    get_country_data()  # Daten von Wikipedia abrufen und speichern
+
+    # Ausgabe der gespeicherten Länderinformationen
+    conn = sqlite3.connect('countries.db')
+    c = conn.cursor()
+    c.execute('SELECT * FROM countries')
+    rows = c.fetchall()
+    
+    for row in rows:
+        print(f"Country: {row[1]}, Capital: {row[2]}, Population: {row[3]}")
+    
+    conn.close()
+
+if __name__ == "__main__":
+    main()
