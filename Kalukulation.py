@@ -8,6 +8,23 @@ import sqlite3
 import sys
 
 
+# -----functoin to give points for population gase by diversion-----
+def get_points_population(user_guess, correct_answer):
+    '''
+    function that calculates the diversion between answer and real value
+    and returns points calculated by diversion as rounded integer
+    '''
+    diversion = float(user_guess/correct_answer)
+    if diversion <= 1:
+        return int(10 * diversion)
+    else:
+        diversion = 2 - diversion
+        if diversion > 0:
+            return int(10 * diversion)
+        else:
+            return 0
+
+
 # ------------------------ Datenbank für Highscores ------------------------
 def create_highscore_db():
     """Erstellt die SQLite-Datenbank für die Highscores, falls sie noch nicht existiert."""
@@ -68,13 +85,14 @@ def get_country_data():
 def show_rules():
     print("\n📜 Spielablauf:")
     print("1. Jeder Spieler bekommt eine zufällige Flagge angezeigt.")
-    print("2. Es gibt Fragen zur Flagge, Hauptstadt und Bevölkerung.")
-    print("3. Im Anfänger-Modus gibt es Multiple-Choice-Fragen.")
-    print("4. Im Pro-Modus müssen die Antworten direkt eingegeben werden.")
-    print("5. Für jede richtige Antwort gibt es 10 Punkte.")
-    print("6. Bei der Einwohnerzahl werden pro 10% Abweichung 1 Punkt abgezogen.")
-    print("7. Am Ende gewinnt der Spieler mit den meisten Punkten!")
-    print("8. Du kannst jederzeit mit 'exit' das Spiel beenden.\n")
+    print("2. Errate das Land zur Flagge.")
+    print("3. Danach wird die Hauptstadt und die Einwohnerzahl des Landes abgefragt.")
+    print("4. Im Anfänger-Modus gibt es Multiple-Choice-Fragen.")
+    print("5. Im Pro-Modus müssen die Antworten direkt eingegeben werden.")
+    print("6. Für jede richtige Antwort gibt es 10 Punkte.")
+    print("7. Bei der Einwohnerzahl werden pro 10% Abweichung 1 Punkt abgezogen.")
+    print("8. Am Ende gewinnt der Spieler mit den meisten Punkten!")
+    print("9. Du kannst jederzeit mit 'exit' das Spiel beenden.\n")
 
 
 def ask_for_rules():
@@ -122,6 +140,7 @@ def get_valid_difficulty():
             print("⚠️ Ungültige Eingabe. Bitte '1' für Anfänger oder '2' für Pro eingeben oder 'exit' zum Beenden.")
 
 
+
 # ------------------------ Spielstart ------------------------
 def start_game():
     print("\n🌎 Willkommen bei Capture the Flag - Flaggen-Quiz!")
@@ -129,9 +148,6 @@ def start_game():
 
     player_count = get_players("👥 Wie viele Spieler spielen mit? ")
     players = [input(f"👤 Spieler {i + 1}, wie heißt du? ") for i in range(player_count)]
-    for player in players:
-        if player.lower() == "exit":
-            exit_game()
     difficulty = get_valid_difficulty()
     rounds = get_players("🔁 Wie viele Runden möchtest du spielen? ")
 
@@ -140,17 +156,27 @@ def start_game():
     score = {player: 0 for player in players}
 
     for _ in range(rounds):
-        used_countries = random.sample(country_names, len(players))
-
-        for i, player in enumerate(players):
-            country = used_countries[i]
+        for player in players:
+            country = random.choice(country_names)
             flag_url = country_data[country]['flag']
             Image.open(BytesIO(requests.get(flag_url).content)).show()
-            capital = country_data[country]['capital']
-            population = country_data[country]['population']
             print(f"{player}, deine Flagge: {flag_url}")
 
+            capital = country_data[country]['capital']
+            population = country_data[country]['population']
+
             if difficulty == "1":
+                country_choices = random.sample(country_names, 3) + [country]
+                random.shuffle(country_choices)
+                for j, choice in enumerate(country_choices, 1):
+                    print(f"{j}. {choice}")
+                country_answer = input("🌍 Wähle das richtige Land: ")
+                if country_choices[int(country_answer) - 1] == country:
+                    score[player] += 10
+                    print("✅ Richtig!")
+                else:
+                    print(f"❌ Falsch! Die richtige Antwort war {country}.")
+
                 capital_choices = random.sample(
                     [c['capital'] for c in country_data.values() if c['capital'] != capital], 3) + [capital]
                 random.shuffle(capital_choices)
@@ -163,22 +189,22 @@ def start_game():
                 else:
                     print(f"❌ Falsch! Die richtige Antwort war {capital}.")
 
-            population_choices = random.sample(
-                [c['population'] for c in country_data.values() if c['population'] != population], 3) + [population]
-            random.shuffle(population_choices)
-            for j, choice in enumerate(population_choices, 1):
-                print(f"{j}. {choice}")
-            population_answer = input("👥 Wähle die richtige Einwohnerzahl: ")
-            if int(population_choices[int(population_answer) - 1]) == population:
-                score[player] += 10
-                print("✅ Richtig!")
-            else:
-                print(f"❌ Falsch! Die richtige Antwort war {population}.")
+                population_choices = random.sample(
+                    [c['population'] for c in country_data.values() if c['population'] != population], 3) + [population]
+                random.shuffle(population_choices)
+                for j, choice in enumerate(population_choices, 1):
+                    print(f"{j}. {choice}")
+                population_answer = input("👥 Wähle die richtige Einwohnerzahl: ")
+                if int(population_choices[int(population_answer) - 1]) == population:
+                    score[player] += get_points_population(int(population_choices[int(population_answer) - 1]),int(population))
+                    print("✅ Richtig!")
+                else:
+                    print(f"❌ Falsch! Die richtige Antwort war {population}.")
 
     print("\n🎉 Spiel beendet! Punktestand:")
     for player, points in score.items():
         print(f"🏅 {player}: {points} Punkte")
-
+    
     print("\n🔥 Die besten 5 Spieler aller Zeiten:")
     for player, points in score.items():
         save_highscore(player, points)
