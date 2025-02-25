@@ -39,7 +39,7 @@ def show_rules():
     print("6. Dieser Prozess wiederholt sich nun so oft wie der Spieler entsprechende Runden angegeben hat.")
     print("--------------------")
     print("Spielregeln:")
-    print("- Es gibt einen Anfänger Modus mit Multiple Choice ")
+    print("- Es gibt einen Anfänger Modus mit Multiple Choice.")
     print("- Im Pro Modus muss man direkt die Abtwort geben.")
     print("- Für jede richtige Antwort gibt es einen Punkt.")
     print("- Am Ende des Spiels gewinnt der Spieler mit den meisten Punkten.")
@@ -73,7 +73,10 @@ def choose_difficulty():
 
 def start_game():
     print("Willkommen bei Capture the Flag - Flaggen-Quiz!")
-    rules_choice = input("Möchtest d")
+    rules_choice = input("Möchtest du eine Einleitung zum Spiel? (Ja/Nein): ").strip().lower()
+    if rules_choice == "ja":
+        show_rules()
+    
     player_count = get_player_count()
     players = greet_players(player_count)
     difficulty = choose_difficulty()
