@@ -169,8 +169,8 @@ def start_game():
             flag_url = country_data[country]['flag']
             # converts the image to print in terminal 
             # inform of ANSI Escape codes 
-            img = Image.open(BytesIO(requests.get(flag_url).content))#.show()
-            output = climage.convert_pil(img, is_unicode=True, is_truecolor=True, is_8color=False ,width=20)
+            img = Image.open(BytesIO(requests.get(flag_url).content)).convert("RGB")#.show()
+            output = climage.convert_pil(img, is_unicode=True, width=20)
             print(f"Spieler: {player}, deine Flagge:\n",output)
 
             capital = country_data[country]['capital']

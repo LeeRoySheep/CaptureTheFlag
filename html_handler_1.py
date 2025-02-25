@@ -31,7 +31,7 @@ class CountryInfo:
             response = requests.get(url)
             response.raise_for_status()  # Ensure request was successful
 
-            soup = BeautifulSoup(response.content, "html.parser")
+            soup = BeautifulSoup(response.content, "lxml")
             tables = soup.find_all("table", {"class": "wikitable"})
 
             if not tables:
