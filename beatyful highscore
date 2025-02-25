@@ -66,12 +66,17 @@ def get_country_data():
 # ------------------------ Spielregeln ------------------------
 def show_rules():
     print("\n📜 Spielablauf:")
-    print("1. Jeder Spieler bekommt eine zufällige Flagge angezeigt.")
-    print("2. Es gibt Fragen zur Flagge, Hauptstadt und Bevölkerung.")
-    print("3. Im Anfänger-Modus gibt es Multiple-Choice-Fragen.")
-    print("4. Im Pro-Modus müssen die Antworten direkt eingegeben werden.")
-    print("5. Für jede richtige Antwort gibt es einen Punkt.")
-    print("6. Am Ende gewinnt der Spieler mit den meisten Punkten!\n")
+    print("1. Wähle die Anzahl der Spieler, Namen, Schwierigkeitsstufe und Rundenanzahl.")
+    print("2. Es wird eine zufällige Flagge angezeigt. Errate das passende Land.")
+    print("3. Danach wird die Hauptstadt und die Einwohnerzahl des Landes abgefragt.")
+    print("4. Für jede richtige Antwort gibt es einen Punkt.")
+    print("5. Der Spieler mit den meisten Punkten gewinnt!")
+    print("\n🎮 Schwierigkeitsstufen:")
+    print("- Anfänger: Multiple-Choice-Fragen")
+    print("- Pro: Direkte Antwort ohne Auswahlmöglichkeiten")
+    print("\n🏆 Highscore:")
+    print("- Die besten 5 Spieler werden in der Rangliste angezeigt.")
+    print("- Kannst du den Highscore knacken? 😉\n")
 
 
 def ask_for_rules():
@@ -88,45 +93,70 @@ def ask_for_rules():
             print(e)
 
 
-def get_population_guess():
+# ------------------------ Spielvorbereitung ------------------------
+def get_player_count():
     while True:
-        population_answer = input("👥 Wie viele Einwohner hat das Land? (Grobe Schätzung erlaubt): ")
-        if population_answer.replace(',', '').isdigit():
-            return int(population_answer.replace(',', ''))
-        else:
+        try:
+            count = int(input("👥 Wie viele Spieler spielen mit? "))
+            if count > 0:
+                return count
+            else:
+                print("⚠️ Bitte eine Zahl größer als 0 eingeben.")
+        except ValueError:
             print("⚠️ Ungültige Eingabe. Bitte eine Zahl eingeben.")
 
 
-# ------------------------ Spielstart ------------------------
+def greet_players(player_count):
+    players = []
+    for i in range(1, player_count + 1):
+        name = input(f"👤 Spieler {i}, wie heißt du? ")
+        players.append(name)
+        print(f"Willkommen, {name}! 😊")
+    return players
+
+
+def choose_difficulty():
+    while True:
+        difficulty = input("💡 Wähle den Schwierigkeitsgrad (1 = Anfänger | 2 = Pro): ").strip().lower()
+        if difficulty in ["1", "anfänger"]:
+            return "anfänger"
+        elif difficulty in ["2", "pro"]:
+            return "pro"
+        else:
+            print("⚠️ Bitte 1 für 'Anfänger' oder 2 für 'Pro' eingeben.")
+
+
 def start_game():
     print("\n🌎 Willkommen bei Capture the Flag - Flaggen-Quiz!")
     ask_for_rules()
 
-    player_count = int(input("👥 Wie viele Spieler spielen mit? "))
-    players = [input(f"👤 Spieler {i + 1}, wie heißt du? ") for i in range(player_count)]
-    difficulty = input("💡 Wähle den Schwierigkeitsgrad (1 = Anfänger | 2 = Pro): ")
+    player_count = get_player_count()
+    players = greet_players(player_count)
+    difficulty = choose_difficulty()
     rounds = int(input("🔁 Wie viele Runden möchtest du spielen? "))
 
     country_data = get_country_data()
     country_names = list(country_data.keys())
     score = {player: 0 for player in players}
 
+    # ------------------------ Spielrunden ------------------------
     for _ in range(rounds):
-        used_countries = random.sample(country_names, len(players))
+        country = random.choice(country_names)  # Zufälliges Land auswählen
+        flag_url = country_data[country]['flag']  # URL der Flagge
+        Image.open(BytesIO(requests.get(flag_url).content)).show()  # Flagge anzeigen
+        capital = country_data[country]['capital']  # Hauptstadt
+        population = country_data[country]['population']  # Bevölkerung
 
-        for i, player in enumerate(players):
-            country = used_countries[i]
-            flag_url = country_data[country]['flag']
-            Image.open(BytesIO(requests.get(flag_url).content)).show()
-            capital = country_data[country]['capital']
-            population = country_data[country]['population']
-            #print(f"{player}, deine Flagge: {flag_url}")
+        # Fragen für jeden Spieler
+        for player in players:
+            print(f"\n{player}, du bist dran!")
 
-            if difficulty == "1":
+            # Land erraten
+            if difficulty == "anfänger":
                 choices = random.sample(country_names, 3) + [country]
                 random.shuffle(choices)
-                for j, choice in enumerate(choices, 1):
-                    print(f"{j}. {choice}")
+                for i, choice in enumerate(choices, 1):
+                    print(f"{i}. {choice}")
                 answer = input("🌍 Wähle die richtige Nummer: ")
                 if choices[int(answer) - 1] == country:
                     score[player] += 1
@@ -141,6 +171,7 @@ def start_game():
                 else:
                     print(f"❌ Falsch! Die richtige Antwort war {country}.")
 
+            # Hauptstadt erraten
             capital_answer = input(f"🏙️ Was ist die Hauptstadt von {country}? ")
             if capital_answer.strip().lower() == capital.lower():
                 score[player] += 1
@@ -148,23 +179,31 @@ def start_game():
             else:
                 print(f"❌ Falsch! Die richtige Antwort war {capital}.")
 
-            population_guess = get_population_guess()
-            if abs(population_guess - population) / population <= 0.1:
-                score[player] += 1
-                print("✅ Richtig! Punkt erhalten.")
-            print(f"ℹ️ Die tatsächliche Einwohnerzahl ist {population}.")
+            # Einwohnerzahl erraten
+            population_answer = input(f"👥 Wie viele Einwohner hat {country}? (Grobe Schätzung erlaubt) ")
+            if population_answer.replace(',', '').isdigit():
+                print(f"ℹ️ Die tatsächliche Einwohnerzahl ist {population}.")
+            else:
+                print("⚠️ Ungültige Eingabe.")
 
+    # ------------------------ Endergebnisse ------------------------
     print("\n🎉 Spiel beendet! Punktestand:")
     for player, points in score.items():
         print(f"🏅 {player}: {points} Punkte")
 
-    print("\n🔥 Die besten 5 Spieler aller Zeiten:")
+    # ------------------------ Highscores ------------------------
+    print("\n🏆 Highscore:")
     for player, points in score.items():
         save_highscore(player, points)
-    for i, (player_name, score) in enumerate(get_top_highscores(), 1):
+
+    # Top 5 Highscores anzeigen
+    print("\n🔥 Die besten 5 Spieler aller Zeiten:")
+    top_scores = get_top_highscores()
+    for i, (player_name, score) in enumerate(top_scores, 1):
         print(f"{i}. {player_name} - {score} Punkte")
 
 
+# ------------------------ Hauptfunktion ------------------------
 if __name__ == "__main__":
-    create_highscore_db()
+    create_highscore_db()  # Datenbank für Highscores erstellen
     start_game()
