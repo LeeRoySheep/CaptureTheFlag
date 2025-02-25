@@ -46,10 +46,10 @@ class CountryInfo:
         """
         Extracts and sets the capital from the DataFrame.
         """
-        df.iloc[:, 0] = df.iloc[:, 0].astype(str)
+        df_string = df.iloc[:, 0].astype(str)
 
-        if df.iloc[:, 0].str.contains("Hauptstadt", case=False, na=False).any():
-            row_idx = df.iloc[:, 0].str.contains("Hauptstadt", case=False, na=False).idxmax()
+        if df_string.str.contains("Hauptstadt", case=False, na=False).any():
+            row_idx = df_string.str.contains("Hauptstadt", case=False, na=False).idxmax()
             self.capital_city = df.iloc[row_idx, 1]
         else:
             raise NameError(f"Error: 'Hauptstadt' not found for {self.country_name}.")

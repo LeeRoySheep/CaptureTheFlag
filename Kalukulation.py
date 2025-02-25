@@ -81,7 +81,7 @@ def get_country_data():
                 flag_url = country.get('flags', {}).get('png', 'Keine Flagge verfügbar')
                 country_dict[name] = {'capital': capital, 'population': population, 'flag': flag_url}
             except NameError as false_name:
-                print(1)
+                print("Creating dictionary from Wikipedia please wait!")
 
         return country_dict
     except Exception as e:
@@ -169,8 +169,9 @@ def start_game():
             flag_url = country_data[country]['flag']
             # converts the image to print in terminal 
             # inform of ANSI Escape codes 
-            output = climage.convert(Image.open(BytesIO(requests.get(flag_url).content))) #Image.open(BytesIO(requests.get(flag_url).content)).show()
-            print(f"{player}, deine Flagge: ",output)
+            img = Image.open(BytesIO(requests.get(flag_url).content))#.show()
+            output = climage.convert_pil(img, is_unicode=True, is_truecolor=True, is_8color=False ,width=20)
+            print(f"Spieler: {player}, deine Flagge:\n",output)
 
             capital = country_data[country]['capital']
             population = country_data[country]['population']
