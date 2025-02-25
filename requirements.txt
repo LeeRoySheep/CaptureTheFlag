@@ -8,3 +8,4 @@ urllib.request
 sqlite3
 html.parser
 pandas
+bs4

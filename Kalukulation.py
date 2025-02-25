@@ -6,6 +6,7 @@ from io import BytesIO
 import requests
 import sqlite3
 import sys
+import html_handler_1 as handle
 
 
 # -----functoin to give points for population gase by diversion-----
@@ -69,11 +70,14 @@ def get_country_data():
 
         country_dict = {}
         for country in data:
-            name = country.get('name', {}).get('common', 'Unbekannt')
-            capital = country.get('capital', ['Unbekannt'])[0]
-            population = country.get('population', 'Unbekannt')
-            flag_url = country.get('flags', {}).get('png', 'Keine Flagge verfügbar')
-            country_dict[name] = {'capital': capital, 'population': population, 'flag': flag_url}
+            try:
+                name = country.get("translations").get("deu").get("common") #country.get('name', {}).get('common', 'Unbekannt')
+                capital = handle.CountryInfo(name).get_capital_city() #country.get('capital', ['Unbekannt'])[0]
+                population = country.get('population', 'Unbekannt')
+                flag_url = country.get('flags', {}).get('png', 'Keine Flagge verfügbar')
+                country_dict[name] = {'capital': capital, 'population': population, 'flag': flag_url}
+            except NameError as false_name:
+                print(f'{name} not found in wikipedia')
 
         return country_dict
     except Exception as e:
