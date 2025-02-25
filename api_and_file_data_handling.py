@@ -7,21 +7,21 @@ from io import BytesIO
 REGEX_URL = re.compile(
                     r'upload\.wikimedia\.org'
                    + r'/wikipedia/commons/thumb/[\w\d]/[\w\d][\w\d]/F\w*\.'
-                   + r'svg/120px-F\w*\.svg\.png'
+                   + r'svg/240px-F\w*\.svg\.png'
                    )
 REGEX_COUNTRY = re.compile(r"tion\" title=\".*?\"><img")
 URL = "https://de.wikipedia.org/wiki/Liste_der_Nationalflaggen"
 ENURL = 'https://en.wikipedia.org/wiki/List_of_national_flags_of_sovereign_states'
 
 
-def get_countries(request_URL):
+def get_countries(request_URL,regex_cunt):
     """
     funktion which gets all country codes with help from regular expressions from the 
     wikipedia link also providing the flags
     it returns a collection of strings with all country names
     """
     wiki_html = requests.get(request_URL)
-    countries_mal = REGEX_COUNTRY.findall(wiki_html.text)
+    countries_mal = regex_cunt.findall(wiki_html.text)
     return [country[13:-6] for country in countries_mal]
 
 
@@ -35,6 +35,9 @@ def get_flag_links(request_URL):
     wiki_html = requests.get(request_URL)
     return REGEX_URL.findall(wiki_html.text)
 
+flags = get_flag_links(URL)
+for index in range(40):
+    print(flags[index])
 
 def get_flags_image_dictionary(flag_urls, countries_lst_de, countries_lst_en):
     """
@@ -69,5 +72,5 @@ def  get_image_to_flag(country, flags_dictionary):
         print("Sorry country not from list or failed to fetch from Wikipedia api.")
 
 
-print(get_countries(ENURL)[3:6])
+
 # get_image_to_flag(get_countries(URL)[3],get_flags_image_dictionary(get_flag_links(URL),get_countries(URL),get_countries(ENURL))).show()
