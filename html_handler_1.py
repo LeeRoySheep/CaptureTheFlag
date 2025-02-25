@@ -77,3 +77,5 @@ class CountryInfo:
 
     def get_inhabitants(self):
         return self.inhabitants
+
+##delivers 217 capitals with inhabitants in 60 sekonds

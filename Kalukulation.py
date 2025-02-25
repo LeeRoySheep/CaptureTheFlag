@@ -86,7 +86,9 @@ def get_country_data():
                 print(type_err)
             except ValueError as val_err:
                 print(val_err)
-
+            except RuntimeError as page_not_found:
+                print(f"Wikipage for country {name} not found! Dictionary still loading!")
+        print(len(country_dict))
         return country_dict
     except Exception as e:
         print(f"Fehler beim Abruf der Daten: {e}")
