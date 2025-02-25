@@ -113,7 +113,7 @@ def exit_game():
     print("🚪 Spiel wird beendet. Danke fürs Spielen!")
     sys.exit()
 
-
+# ------------------------Spieler------------------------
 def get_players(prompt):
     while True:
         try:
@@ -128,7 +128,7 @@ def get_players(prompt):
         except ValueError:
             print("⚠️ Ungültige Eingabe. Bitte eine Zahl eingeben oder 'exit' zum Beenden.")
 
-
+# ---------------------Schwierigkeitsgrad---------------------
 def get_valid_difficulty():
     while True:
         difficulty = input("💡 Wähle den Schwierigkeitsgrad (1 = Anfänger | 2 = Pro): ").strip()
@@ -160,7 +160,7 @@ def start_game():
             country = random.choice(country_names)
             flag_url = country_data[country]['flag']
             Image.open(BytesIO(requests.get(flag_url).content)).show()
-            print(f"{player}, deine Flagge: {flag_url}")
+            #print(f"{player}, deine Flagge: {flag_url}")
 
             capital = country_data[country]['capital']
             population = country_data[country]['population']
@@ -200,6 +200,31 @@ def start_game():
                     print("✅ Richtig!")
                 else:
                     print(f"❌ Falsch! Die richtige Antwort war {population}.")
+            else: 
+                country_answer = input("🌍 Nenne das Land zur Flagge: ")
+                if country_answer.strip().lower() == country.lower():
+                    score[player] += 10
+                    print("✅ Richtig!")
+                else:
+                    print(f"❌ Falsch! Die richtige Antwort war {country}.")
+
+                capital_answer = input("🏙️ Nenne die Hauptstadt: ")
+                if capital_answer.strip().lower() == capital.lower():
+                    score[player] += 10
+                    print("✅ Richtig!")
+                else:
+                    print(f"❌ Falsch! Die richtige Antwort war {capital}.")
+                while True:
+                    try:
+                        population_answer = int(input("👥 Schätze die Einwohnerzahl des Landes: "))
+                        break
+                    except ValueError as val_err:
+                        print("Falsche Eingabe!\nBitte geben Sie einen Integer größer 0 ein!")
+                points_population = get_points_population(population_answer, population)
+                score[player] += points_population
+                print(f"🏆 Du hast {points_population} Punkte für die Einwohnerzahl erhalten."
+                      + f"Die richtige Antwort lautet: {population}")
+
 
     print("\n🎉 Spiel beendet! Punktestand:")
     for player, points in score.items():
@@ -215,3 +240,50 @@ def start_game():
 if __name__ == "__main__":
     create_highscore_db()
     start_game()
+
+
+
+
+
+"""
+# Endprotokoll: Capture the Flag - Flaggen-Quiz
+
+Dieses Endprotokoll beschreibt die wichtigsten Funktionen des Spiels *Capture the Flag - Flaggen-Quiz* sowie deren Funktionsweise.
+
+## Funktionen
+
+### 1. **get_points_population(user_guess, correct_answer)**
+Berechnet die Punkte basierend auf der Abweichung zwischen der geschätzten und der tatsächlichen Bevölkerungszahl.
+- Parameter: `user_guess` (int), `correct_answer` (int)
+- Rückgabe: Punkte (int)
+
+### 2. **get_country_data()**
+Lädt die Länderinformationen (Name, Hauptstadt, Bevölkerung, Flaggen-URL) aus der API https://restcountries.com/v3.1/all.
+- Rückgabe: Dictionary mit Ländern und deren Details
+
+### 3. **save_highscore(name, score)**
+Speichert den Highscore eines Spielers in der Liste `highscores`.
+- Parameter: `name` (str), `score` (int)
+
+### 4. **display_highscores()**
+Zeigt die Top 10 Highscores in absteigender Reihenfolge an.
+
+### 5. **start_game(simulated_input=None)**
+Der Hauptprozess des Spiels, der die Anzahl der Spieler, Runden und den Schwierigkeitsgrad abfragt. Es zeigt zufällig gewählte Länderflaggen an, fordert den Spieler auf, das Land, die Hauptstadt und die ungefähre Bevölkerungszahl zu erraten.
+- Parameter: `simulated_input` (list, optional) für Testzwecke
+
+### Ablauf
+1. Der Spieler wählt die Anzahl der Spieler.
+2. Jeder Spieler gibt seinen Namen ein.
+3. Der Spieler wählt den Schwierigkeitsgrad (1 = Anfänger, 2 = Pro).
+4. Der Spieler wählt die Anzahl der Runden.
+5. Für jede Runde:
+    - Die Flagge eines zufälligen Landes wird angezeigt.
+    - Der Spieler rät das Land, die Hauptstadt und die Einwohnerzahl.
+6. Am Ende des Spiels werden die Punkte angezeigt und in die Highscore-Liste eingetragen.
+
+### Fehlerbehandlung
+- Ungültige Eingaben werden abgefangen.
+- Fehlt die API-Antwort, wird das Spiel abgebrochen.
+- Das Programm berücksichtigt, dass die Bevölkerungszahl möglicherweise nicht genau erraten wird.
+"""

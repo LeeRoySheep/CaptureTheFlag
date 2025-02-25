@@ -1,43 +1,57 @@
 import sys
-from PyQt6.QtCore import Qt
+
 from PyQt6.QtWidgets import (
     QApplication,
-    QCheckBox,
-    QComboBox,
-    QDial,
-    QDoubleSpinBox,
-    QLabel,
-    QLineEdit,
-    QListWidget,
+    QHBoxLayout,
     QMainWindow,
-    QSlider,
-    QSpinBox,
+    QPushButton,
+    QStackedLayout,
+    QVBoxLayout,
+    QWidget,
 )
-import api_and_file_data_handling
 
 class MainWindow(QMainWindow):
-
     def __init__(self):
         super().__init__()
-
         self.setWindowTitle("My App")
 
-        widget = QCheckBox("This is a checkbox")
-        widget.setCheckState(Qt.CheckState.Unchecked)
+        pagelayout = QVBoxLayout()
+        button_layout = QHBoxLayout()
+        self.stacklayout = QStackedLayout()
 
-        # For tristate: widget.setCheckState(Qt.CheckState.PartiallyChecked)
-        # Or: widget.setTristate(True)
-        widget.stateChanged.connect(self.show_state)
+        pagelayout.addLayout(button_layout)
+        pagelayout.addLayout(self.stacklayout)
 
+        btn = QPushButton("red")
+        btn.pressed.connect(self.activate_tab_1)
+        button_layout.addWidget(btn)
+        self.stacklayout.addWidget(Color("red"))
+
+        btn = QPushButton("green")
+        btn.pressed.connect(self.activate_tab_2)
+        button_layout.addWidget(btn)
+        self.stacklayout.addWidget(Color("green"))
+
+        btn = QPushButton("yellow")
+        btn.pressed.connect(self.activate_tab_3)
+        button_layout.addWidget(btn)
+        self.stacklayout.addWidget(Color("yellow"))
+
+        widget = QWidget()
+        widget.setLayout(pagelayout)
         self.setCentralWidget(widget)
 
-    def show_state(self, s):
-        print(s == Qt.CheckState.Checked.value)
-        print(s)
+    def activate_tab_1(self):
+        self.stacklayout.setCurrentIndex(0)
+
+    def activate_tab_2(self):
+        self.stacklayout.setCurrentIndex(1)
+
+    def activate_tab_3(self):
+        self.stacklayout.setCurrentIndex(2)
 
 
 app = QApplication(sys.argv)
-w = MainWindow()
-
-w.show()
+window = MainWindow()
+window.show()
 app.exec()
