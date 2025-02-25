@@ -17,7 +17,10 @@ def get_points_population(user_guess, correct_answer):
         return int(10 * diversion)
     else:
         diversion = 2 - diversion
-        return int(10 * diversion)
+        if diversion > 0:
+            return int(10 * diversion)
+        else:
+            return 0
 
 
 # Funktion zum Abrufen von Ländern, Hauptstädten, Einwohnerzahlen und Flaggen
