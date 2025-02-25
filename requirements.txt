@@ -9,3 +9,4 @@ sqlite3
 html.parser
 pandas
 bs4
+climage

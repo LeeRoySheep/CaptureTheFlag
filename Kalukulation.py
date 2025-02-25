@@ -7,6 +7,10 @@ import requests
 import sqlite3
 import sys
 import html_handler_1 as handle
+import climage 
+  
+
+
 
 
 # -----functoin to give points for population gase by diversion-----
@@ -77,7 +81,7 @@ def get_country_data():
                 flag_url = country.get('flags', {}).get('png', 'Keine Flagge verfügbar')
                 country_dict[name] = {'capital': capital, 'population': population, 'flag': flag_url}
             except NameError as false_name:
-                print(f'{name} not found in wikipedia')
+                print(1)
 
         return country_dict
     except Exception as e:
@@ -163,8 +167,10 @@ def start_game():
         for player in players:
             country = random.choice(country_names)
             flag_url = country_data[country]['flag']
-            Image.open(BytesIO(requests.get(flag_url).content)).show()
-            #print(f"{player}, deine Flagge: {flag_url}")
+            # converts the image to print in terminal 
+            # inform of ANSI Escape codes 
+            output = climage.convert(Image.open(BytesIO(requests.get(flag_url).content))) #Image.open(BytesIO(requests.get(flag_url).content)).show()
+            print(f"{player}, deine Flagge: ",output)
 
             capital = country_data[country]['capital']
             population = country_data[country]['population']
