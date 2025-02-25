@@ -22,13 +22,19 @@ class MainWindow(QMainWindow):
 
         self.setWindowTitle("My App")
 
-        widget = QLabel("Welches Land sehen Sie")
-        font = widget.font()
-        font.setPointSize(30)
-        widget.setFont(font)
-        widget.setAlignment(Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignVCenter)
+        widget = QCheckBox("This is a checkbox"
+        widget.setCheckState(Qt.CheckState.Checked)
+
+        # For tristate: widget.setCheckState(Qt.CheckState.PartiallyChecked)
+        # Or: widget.setTristate(True)
+        widget.stateChanged.connect(self.show_state)
 
         self.setCentralWidget(widget)
+
+    def show_state(self, s):
+        print(s == Qt.CheckState.Checked.value)
+        print(s)
+
 
 app = QApplication(sys.argv)
 w = MainWindow()
