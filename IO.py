@@ -22,8 +22,8 @@ class MainWindow(QMainWindow):
 
         self.setWindowTitle("My App")
 
-        widget = QCheckBox("This is a checkbox"
-        widget.setCheckState(Qt.CheckState.Checked)
+        widget = QCheckBox("This is a checkbox")
+        widget.setCheckState(Qt.CheckState.Unchecked)
 
         # For tristate: widget.setCheckState(Qt.CheckState.PartiallyChecked)
         # Or: widget.setTristate(True)
