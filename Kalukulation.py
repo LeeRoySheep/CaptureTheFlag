@@ -6,7 +6,7 @@ from io import BytesIO
 import requests
 import sqlite3
 import sys
-import html_handler_1 as handle
+import html_handler_2 as handle
 import climage 
   
 
@@ -82,6 +82,10 @@ def get_country_data():
                 country_dict[name] = {'capital': capital, 'population': population, 'flag': flag_url}
             except NameError as false_name:
                 print("Creating dictionary from Wikipedia please wait!")
+            except TypeError as type_err:
+                print(type_err)
+            except ValueError as val_err:
+                print(val_err)
 
         return country_dict
     except Exception as e:
@@ -171,7 +175,8 @@ def start_game():
             # inform of ANSI Escape codes 
             img = Image.open(BytesIO(requests.get(flag_url).content)).convert("RGB")#.show()
             output = climage.convert_pil(img, is_unicode=True, width=20)
-            print(f"Spieler: {player}, deine Flagge:\n",output)
+            print(f"Spieler: {player}, deine Flagge:\n\n")
+            print(output)
 
             capital = country_data[country]['capital']
             population = country_data[country]['population']
