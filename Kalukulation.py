@@ -7,7 +7,8 @@ import requests
 import sqlite3
 import sys
 import html_handler_2 as handle
-import climage 
+import climage
+from File_Handler import FileHandler as f_handle
   
 
 
@@ -17,7 +18,10 @@ import climage
 def get_points_population(user_guess, correct_answer):
     '''
     function that calculates the diversion between answer and real value
-    and returns points calculated by diversion as rounded integer
+    and returns points calculated by diversion as float to arounded integer
+    param1: user_guesss
+    param2: correct_answer
+    return: 10 >= int(10 * diversion) >= 0
     '''
     diversion = float(user_guess/correct_answer)
     if diversion <= 1:
@@ -32,7 +36,10 @@ def get_points_population(user_guess, correct_answer):
 
 # ------------------------ Datenbank für Highscores ------------------------
 def create_highscore_db():
-    """Erstellt die SQLite-Datenbank für die Highscores, falls sie noch nicht existiert."""
+    """
+    Erstellt die SQLite-Datenbank für die Highscores,
+    falls sie noch nicht existiert.
+    """
     conn = sqlite3.connect('highscores.db')
     c = conn.cursor()
     c.execute('''
@@ -47,6 +54,12 @@ def create_highscore_db():
 
 
 def save_highscore(player_name, score):
+    """
+    function that checks for new highscores at end of game and
+    saves the score and player name to a sqlite3 based database
+    param1: player_name
+    param2: score
+    """
     conn = sqlite3.connect('highscores.db')
     c = conn.cursor()
     c.execute('INSERT INTO highscores (player_name, score) VALUES (?, ?)', (player_name, score))
@@ -55,6 +68,12 @@ def save_highscore(player_name, score):
 
 
 def get_top_highscores(limit=5):
+    """
+    function to read the highscores from a sqlite3 based database
+    and returns them as list of tuples
+    param1: limit with default value 5
+    return: top_scores
+    """
     conn = sqlite3.connect('highscores.db')
     c = conn.cursor()
     c.execute('SELECT player_name, score FROM highscores ORDER BY score DESC LIMIT ?', (limit,))
@@ -65,6 +84,15 @@ def get_top_highscores(limit=5):
 
 # ------------------------ Länder-Daten abrufen ------------------------
 def get_country_data():
+    """
+    function to create a dictionary of dictionaries with
+    main keys as 'name' of countries, each refering to a dictionary
+    of 'flag_url' key refering to an url refering to flag image as '.png',
+    both extracted from a '.json' file.
+    And population as key for number of inhabitants and capital_city as key for the 
+    capital city in the country, both extracted from Wikipedia.
+    return: countries_dict 
+    """
     url = "https://restcountries.com/v3.1/all"
     try:
         import ssl
@@ -97,19 +125,17 @@ def get_country_data():
 
 # ------------------------ Spielregeln ------------------------
 def show_rules():
-    print("\n📜 Spielablauf:")
-    print("1. Jeder Spieler bekommt eine zufällige Flagge angezeigt.")
-    print("2. Errate das Land zur Flagge.")
-    print("3. Danach wird die Hauptstadt und die Einwohnerzahl des Landes abgefragt.")
-    print("4. Im Anfänger-Modus gibt es Multiple-Choice-Fragen.")
-    print("5. Im Pro-Modus müssen die Antworten direkt eingegeben werden.")
-    print("6. Für jede richtige Antwort gibt es 10 Punkte.")
-    print("7. Bei der Einwohnerzahl werden pro 10% Abweichung 1 Punkt abgezogen.")
-    print("8. Am Ende gewinnt der Spieler mit den meisten Punkten!")
-    print("9. Du kannst jederzeit mit 'exit' das Spiel beenden.\n")
+    '''
+    void function printing rules to Terminal saved in rules.txt
+    '''
+    print(f_handle('rules.txt').txt_file_to_str())
 
 
 def ask_for_rules():
+    '''
+    function to that asks for player input and prints rules 
+    if wanted by player
+    '''
     while True:
         try:
             rules_choice = input("📋 Möchtest du die Spielregeln sehen? (Ja/Nein): ").strip().lower()
@@ -124,11 +150,19 @@ def ask_for_rules():
 
 
 def exit_game():
+    """
+    void function to end game any time
+    """
     print("🚪 Spiel wird beendet. Danke fürs Spielen!")
     sys.exit()
 
 # ------------------------Spieler------------------------
 def get_players(prompt):
+    '''
+    function to get number of players form user as integer
+    biger than 0
+    return: value as int>0
+    '''
     while True:
         try:
             value = input(prompt).strip()
@@ -142,8 +176,12 @@ def get_players(prompt):
         except ValueError:
             print("⚠️ Ungültige Eingabe. Bitte eine Zahl eingeben oder 'exit' zum Beenden.")
 
+
 # ---------------------Schwierigkeitsgrad---------------------
 def get_valid_difficulty():
+    """
+    function
+    """
     while True:
         difficulty = input("💡 Wähle den Schwierigkeitsgrad (1 = Anfänger | 2 = Pro): ").strip()
         if difficulty.lower() == "exit":

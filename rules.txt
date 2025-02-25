@@ -1,0 +1,11 @@
+
+📜 Spielablauf:
+1. Jeder Spieler bekommt eine zufällige Flagge angezeigt.
+2. Errate das Land zur Flagge.
+3. Danach wird die Hauptstadt und die Einwohnerzahl des Landes abgefragt.
+4. Im Anfänger-Modus gibt es Multiple-Choice-Fragen.
+5. Im Pro-Modus müssen die Antworten direkt eingegeben werden.
+6. Für jede richtige Antwort gibt es 10 Punkte.
+7. Bei der Einwohnerzahl werden pro 10% Abweichung 1 Punkt abgezogen.
+8. Am Ende gewinnt der Spieler mit den meisten Punkten!
+9. Du kannst jederzeit mit 'exit' das Spiel beenden.
