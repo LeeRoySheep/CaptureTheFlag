@@ -6,4 +6,5 @@ QtCore
 QtWidgets
 urllib.request
 sqlite3
-HTMLParser
+html.parser
+pandas

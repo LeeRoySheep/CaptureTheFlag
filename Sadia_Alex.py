@@ -44,6 +44,16 @@ def show_rules():
     print("- Für jede richtige Antwort gibt es einen Punkt.")
     print("- Am Ende des Spiels gewinnt der Spieler mit den meisten Punkten.")
 
+def ask_for_rules():
+    while True:
+        try: 
+            rules_choice = input("Möchtest du eine Einleitung zum Spiel? (Ja/Nein): ").strip().lower()
+            if rules_choice == "ja":
+                show_rules()
+            else:
+                raise ValueError("Ungültige Eingabe")
+
+
 def get_player_count():
     while True:
         try:
@@ -73,9 +83,6 @@ def choose_difficulty():
 
 def start_game():
     print("Willkommen bei Capture the Flag - Flaggen-Quiz!")
-    rules_choice = input("Möchtest du eine Einleitung zum Spiel? (Ja/Nein): ").strip().lower()
-    if rules_choice == "ja":
-        show_rules()
     
     player_count = get_player_count()
     players = greet_players(player_count)
