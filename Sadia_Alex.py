@@ -163,7 +163,7 @@ def start_game():
             # Abfrage der Einwohnerzahl
             population_answer = input(f"Wie viele Einwohner hat {country}? (Grobe Schätzung erlaubt) ")
             if population_answer.replace(',', '').isdigit():
-                
+                score[player] += get_points_population(int(population_answer), int(population))
                 print(f"Die tatsächliche Einwohnerzahl ist {population}.")
             else:
                 print("Ungültige Eingabe.")
