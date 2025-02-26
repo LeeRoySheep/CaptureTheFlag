@@ -1,4 +1,4 @@
-## 
+import sys
 
 def check_int_input(min=None,inclusive_min=True,max=None,inclusive_max=True):
     '''
@@ -84,8 +84,14 @@ def check_int_input(min=None,inclusive_min=True,max=None,inclusive_max=True):
             if user_int.isdecimal():
                 return int(user_int)
             else:
-                print("\n!Falsche Eingabe!\n")
+                if input("\n!Falsche Eingabe!\nWenn Sie wollen koennen Sie mit exit das Spiel jetzt verlassen?") == 'exit':
+                    exit_game()
 
         
-
+def exit_game():
+    """
+    Beendet das Spiel.
+    """
+    print("🚪 Spiel wird beendet. Danke fürs Spielen!")
+    sys.exit()
 

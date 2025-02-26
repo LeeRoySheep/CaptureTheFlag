@@ -14,7 +14,7 @@ import html_handler_v3 as handle
 import climage
 from File_Handler import FileHandler as f_handle
 import asyncio
-from Input_Handler import check_int_input
+from Input_Handler import check_int_input, exit_game
 
 
 # =========================================================
@@ -164,14 +164,6 @@ def ask_for_rules():
                 raise ValueError("⚠️ Ungültige Eingabe! Bitte Ja oder Nein angeben.")
         except ValueError as e:
             print(e)
-
-
-def exit_game():
-    """
-    Beendet das Spiel.
-    """
-    print("🚪 Spiel wird beendet. Danke fürs Spielen!")
-    sys.exit()
 
 
 # =========================================================
