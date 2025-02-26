@@ -322,8 +322,11 @@ def start_game():
                         print("Falsche Eingabe!\nBitte geben Sie einen Integer größer 0 ein!")
                 points_population = get_points_population(population_answer, population)
                 score[player] += points_population
-                print(f"🏆 Du hast {points_population} Punkte für die Einwohnerzahl erhalten."
-                      + f"Die richtige Antwort lautet: {population}")
+                print(
+                    f"🏆 Du hast {points_population} Punkte für die Einwohnerzahl erhalten."
+                    + f"Die richtige Antwort lautet: {population}"
+                    )
+                del country_data[country]
 
 
     print("\n🎉 Spiel beendet! Punktestand:")
