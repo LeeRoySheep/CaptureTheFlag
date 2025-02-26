@@ -14,11 +14,21 @@ def check_int_input(min=None,inclusive_min=True,max=None,inclusive_max=True):
         if min != None and max != None:
             if inclusive_min and inclusive_max:
                 user_int = input(f'Bitte geben Sie eine ganze Zahl von {min} bis {max} eingeschlossen ein: ')
+                if user_int.isdecimal():
+                    if max >= int(user_int) >= min:
+                        return int(user_int)
+                    else:
+                        print("\n!Falsche Eingabe!\n")
             elif inclusive_min:
                 user_int = input(
                     f'Bitte geben Sie eine ganze Zahl eingeschlossen {min}'
                     + f' bis {max} ausgeschlossen ein: '
-                    )
+                )
+                if user_int.isdecimal():
+                    if max >= int(user_int) >= min:
+                        return int(user_int)
+                    else:
+                        print("\n!Falsche Eingabe!\n")
             elif inclusive_max:
                 user_int = input(
                     f'Bitte geben Sie eine ganze Zahl ausgeschlossen {min}'
@@ -41,7 +51,7 @@ def check_int_input(min=None,inclusive_min=True,max=None,inclusive_max=True):
                 user_int = input(f'Bitte geben Sie eine ganze Zahl kleiner {max} ein: ')
         else:
             user_int = input(f'Bitte geben Sie eine beliebige ganze Zahl an: ')
-            
+
         if user_int.isdecimal():
             return int(user_int)
         else:
