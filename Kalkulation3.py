@@ -14,6 +14,7 @@ import html_handler_v3 as handle
 import climage
 from File_Handler import FileHandler as f_handle
 import asyncio
+from Input_Handler import check_int_input
 
 
 # =========================================================
@@ -242,18 +243,18 @@ def start_game():
     rounds = get_players("🔁 Wie viele Runden möchtest du spielen? ")
     country_data = get_country_data()
     print()
-    country_names = list(country_data.keys())
     score = {player: 0 for player in players}
 
     for _ in range(rounds):
         for player in players:
+            country_names = list(country_data.keys())
             country = random.choice(country_names)
             flag_url = country_data[country]['flag']
             # converts the image to print in terminal 
             # inform of ANSI Escape codes 
             img = Image.open(BytesIO(requests.get(flag_url).content)).convert("RGB")#.show()
             output = climage.convert_pil(img, is_unicode=True, width=20)
-            print(f"Spieler: {player}, deine Flagge:\n\n")
+            print(f"Spieler: {player}, deine Flagge:\n")
             print(output)
 
             capital = country_data[country]['capital']
@@ -264,7 +265,8 @@ def start_game():
                 random.shuffle(country_choices)
                 for j, choice in enumerate(country_choices, 1):
                     print(f"{j}. {choice}")
-                country_answer = input("🌍 Wähle das richtige Land: ")
+                print("🌍 Wähle das richtige Land:")
+                country_answer = check_int_input(min=1,max=4)
                 if country_choices[int(country_answer) - 1] == country:
                     score[player] += 10
                     print("✅ Richtig!")
@@ -276,7 +278,8 @@ def start_game():
                 random.shuffle(capital_choices)
                 for j, choice in enumerate(capital_choices, 1):
                     print(f"{j}. {choice}")
-                capital_answer = input("🏙️ Wähle die richtige Hauptstadt: ")# Fehler f[r falsche eingaben abfangen]
+                print("🏙️ Wähle die richtige Hauptstadt:")
+                capital_answer = check_int_input(min=1,max=4)
                 if capital_choices[int(capital_answer) - 1] == capital:
                     score[player] += 10
                     print("✅ Richtig!")
@@ -288,12 +291,14 @@ def start_game():
                 random.shuffle(population_choices)
                 for j, choice in enumerate(population_choices, 1):
                     print(f"{j}. {choice}")
-                population_answer = input("👥 Wähle die richtige Einwohnerzahl: ")
+                print("👥 Wähle die richtige Einwohnerzahl:")
+                population_answer = check_int_input(min=1,max=4)
                 if int(population_choices[int(population_answer) - 1]) == population:
                     score[player] += get_points_population(int(population_choices[int(population_answer) - 1]),int(population))
                     print("✅ Richtig!")
                 else:
                     print(f"❌ Falsch! Die richtige Antwort war {population}.")
+                    del country_data[country]
             # -------------Pro-Handling
             else: 
                 country_answer = input("🌍 Nenne das Land zur Flagge: ")
