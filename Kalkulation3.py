@@ -5,14 +5,9 @@
 import random
 import urllib.request
 import json
-from PIL import Image
-from io import BytesIO
-import requests
 import sqlite3
-import sys
 import html_handler_v3 as handle
-import climage
-from File_Handler import FileHandler as f_handle
+from File_Handler import FileHandler as f_handle, smooth_image
 import asyncio
 from Input_Handler import check_int_input, exit_game
 
@@ -244,10 +239,11 @@ def start_game():
             flag_url = country_data[country]['flag']
             # converts the image to print in terminal 
             # inform of ANSI Escape codes 
-            img = Image.open(BytesIO(requests.get(flag_url).content)).convert("RGB")#.show()
-            output = climage.convert_pil(img, is_unicode=True, width=50)
+            #img = Image.open(BytesIO(requests.get().content)).convert("CMYK").convert("RGB")#.show()
+            #output = climage.convert_pil(img, is_unicode=True, width=60)
             print(f"Spieler: {player}, deine Flagge:\n")
-            print(output)
+            #print(output)
+            smooth_image(flag_url)
 
             capital = country_data[country]['capital']
             population = country_data[country]['population']
