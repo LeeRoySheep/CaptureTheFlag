@@ -9,6 +9,7 @@ import sys
 import html_handler_ai_improved as handle
 import climage
 from File_Handler import FileHandler as f_handle
+import asyncio
 
 
 # -----functoin to give points for population gase by diversion-----
@@ -104,9 +105,10 @@ def get_country_data():
             flag_url = country.get('flags', {}).get('png', 'Keine Flagge verfügbar')
             country_flag_dict[name] = flag_url
         try:
-            country_object = handle.CountryInfo(list(country_list=country_flag_dict.keys()))
-            for country, info_dict in country_object.country_info_dict.items():
-                country_dict[country] = {'capital': info_dict["capital_city"], 'population': info_dict["inhabitants"], 'flag': country_flag_dict[country]}
+            #using asyncio for faster extraktion of data 
+            successful_extractions = asyncio.run(handle.fetch_all_countries([*country_flag_dict.keys()]))[0]
+            for country, capital, population in successful_extractions:
+                country_dict[country] = {"capital": capital, 'population': population, "flag": country_flag_dict[country]}
         except NameError as false_name:
             print(false_name, "\nCreating dictionary from Wikipedia please wait!")
         except TypeError as type_err:
@@ -115,8 +117,6 @@ def get_country_data():
             print(val_err,"\nDictionary still loading please wait!")
         except RuntimeError:
             print(f"Wikipage for country {name} not found!\nDictionary still loading!")
-
-        print(len(country_dict))
         return country_dict
     except Exception as e:
         print(f"Fehler beim Abruf der Daten: {e}")

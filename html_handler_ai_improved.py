@@ -2,7 +2,6 @@ import aiohttp
 import asyncio
 from bs4 import BeautifulSoup
 import re
-import time
 
 
 class CountryInfo:
@@ -14,24 +13,8 @@ class CountryInfo:
         self.country_name = country_name
         self.capital_city = None
         self.inhabitants = None
-        self.country_info_dict = self.fetch_all_countries(self.country_list)
+        self.country_info_dict = {}
     
-    
-    async def fetch_all_countries(self, country_list):
-        """
-        Asynchronously fetches Wikipedia data for all countries in parallel.
-        """
-        async with aiohttp.ClientSession() as session:
-            tasks = [CountryInfo(country).fetch_country_info(session) for country in country_list]
-            results = await asyncio.gather(*tasks)
-
-            for i, country in enumerate(country_list):
-                if results[i] and results[i].capital_city and results[i].inhabitants:
-                    self.set_capital_city(results[i].capital_city)
-                    self.set_inhabitants(results[i].inhabitants)
-                    self.country_info_dict[country] = {"capital_city": self.get_capital_city, "inhabitants": self.get_inhabitants}
-            return self.country_info_dict
-
 
     async def fetch_country_info(self, session):
         """
@@ -39,7 +22,7 @@ class CountryInfo:
         """
         url = f"https://de.wikipedia.org/wiki/{self.country_name}"
         try:
-            async with session.get(url, timeout=5, ssl=False) as response:  # SSL disabled
+            async with session.get(url, timeout=10, ssl=False) as response:  # SSL disabled
                 if response.status != 200:
                     print(f"❌ Error fetching {self.country_name}: HTTP {response.status}")
                     return None  # Return None for failed requests
@@ -60,12 +43,13 @@ class CountryInfo:
                         value_text = cells[1].get_text(strip=True)
 
                         if "hauptstadt" in key_text and not self.capital_city:
-                            self.capital_city = self.clean_capital_city(cells[1])
+                            self.set_capital_city(self.clean_capital_city(cells[1]))
 
                         if "einwohner" in key_text and not self.inhabitants:
-                            self.inhabitants = self.clean_population(value_text)
+                            self.set_inhabitants(self.clean_population(value_text))
 
                         if self.capital_city and self.inhabitants:
+                            self.country_info_dict[self.country_name] = {"capital_city": self.capital_city, "inhabitants": self.inhabitants}
                             return self  # Return object with data
 
         except asyncio.TimeoutError:
@@ -110,3 +94,23 @@ class CountryInfo:
 
     def set_inhabitants(self, inhabitants):
         self.inhabitants = inhabitants
+
+
+async def fetch_all_countries(country_list):
+    """
+    Asynchronously fetches Wikipedia data for all countries in parallel.
+    """
+    successful_extractions = []
+    failed_extractions = []
+
+    async with aiohttp.ClientSession() as session:
+        tasks = [CountryInfo(country).fetch_country_info(session) for country in country_list]
+        results = await asyncio.gather(*tasks)
+
+        for i, country in enumerate(country_list):
+            if results[i] and results[i].capital_city and results[i].inhabitants:
+                successful_extractions.append((country, results[i].capital_city, results[i].inhabitants))
+            else:
+                failed_extractions.append(country)
+
+    return successful_extractions, failed_extractions
