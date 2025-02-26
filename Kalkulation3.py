@@ -245,7 +245,7 @@ def start_game():
             # converts the image to print in terminal 
             # inform of ANSI Escape codes 
             img = Image.open(BytesIO(requests.get(flag_url).content)).convert("RGB")#.show()
-            output = climage.convert_pil(img, is_unicode=True, width=20)
+            output = climage.convert_pil(img, is_unicode=True, width=50)
             print(f"Spieler: {player}, deine Flagge:\n")
             print(output)
 
