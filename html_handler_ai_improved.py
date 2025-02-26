@@ -16,13 +16,13 @@ class CountryInfo:
         self.country_info_dict = {}
     
 
-    async def fetch_country_info(self, session):
+    async def fetch_country_info(self, session, time=10):
         """
         Asynchronously fetch Wikipedia page and extract capital city & population.
         """
         url = f"https://de.wikipedia.org/wiki/{self.country_name}"
         try:
-            async with session.get(url, timeout=10, ssl=False) as response:  # SSL disabled
+            async with session.get(url, timeout=time, ssl=False) as response:  # SSL disabled
                 if response.status != 200:
                     print(f"❌ Error fetching {self.country_name}: HTTP {response.status}")
                     return None  # Return None for failed requests
@@ -96,7 +96,7 @@ class CountryInfo:
         self.inhabitants = inhabitants
 
 
-async def fetch_all_countries(country_list):
+async def fetch_all_countries(country_list,timeout=10):
     """
     Asynchronously fetches Wikipedia data for all countries in parallel.
     """
@@ -104,7 +104,7 @@ async def fetch_all_countries(country_list):
     failed_extractions = []
 
     async with aiohttp.ClientSession() as session:
-        tasks = [CountryInfo(country).fetch_country_info(session) for country in country_list]
+        tasks = [CountryInfo(country).fetch_country_info(session,timeout) for country in country_list]
         results = await asyncio.gather(*tasks)
 
         for i, country in enumerate(country_list):

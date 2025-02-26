@@ -81,7 +81,7 @@ def get_top_highscores(limit=5):
 
 
 # ------------------------ Länder-Daten abrufen ------------------------
-def get_country_data():
+def get_country_data(timeout=10):
     """
     function to create a dictionary of dictionaries with
     main keys as 'name' of countries, each refering to a dictionary
@@ -106,7 +106,7 @@ def get_country_data():
             country_flag_dict[name] = flag_url
         try:
             #using asyncio for faster extraktion of data 
-            successful_extractions = asyncio.run(handle.fetch_all_countries([*country_flag_dict.keys()]))[0]
+            successful_extractions = asyncio.run(handle.fetch_all_countries([*country_flag_dict.keys()],timeout))[0]
             for country, capital, population in successful_extractions:
                 country_dict[country] = {"capital": capital, 'population': population, "flag": country_flag_dict[country]}
         except NameError as false_name:
@@ -156,6 +156,7 @@ def exit_game():
     print("🚪 Spiel wird beendet. Danke fürs Spielen!")
     sys.exit()
 
+
 # ------------------------Spieler------------------------
 def get_players(prompt):
     '''
@@ -194,6 +195,29 @@ def get_valid_difficulty():
             print("⚠️ Ungültige Eingabe. Bitte '1' für Anfänger oder '2' für Pro eingeben oder 'exit' zum Beenden.")
 
 
+# Funktion um die Warteit zu verkürzen oder die Genauigkeit zu erhöhen
+def get_waiting_time():
+    """
+    function to determine waiting time by user input
+    return: time
+    """
+    while True:
+        time = input(" Da einige Daten von Wikipedia aufgerufen werden,\n"
+            + " kann es fuer einzelne Daten zu sehr langen Wartezeiten kommen.\n"
+            + " Deshalb können Sie jetzt entscheiden wie lange Sie bereit sind zu warten.\n"
+            + " Die Standardwartezeit liegt bei ca. 15 Sekunden und hat den Wert 10.\n"
+            + " Wählen Sie bitte einen Wert zwischen 20 ca. 30 Sekunden und 3\n"
+            + " ca. 8 Sekunden: "
+            )
+        if time.isdecimal():
+            time = int(time)
+            if 20 >= time >= 3:
+                return time
+            else:
+                print("Falsche Eingabe! Es muss ein Integer zwischen 3 und 20 eingeschlossen sein!")
+        else:
+            print("Wie es scheint haben Sie sich vertippt! Bitte versuchen Sie es erneut.")
+
 
 # ------------------------ Spielstart ------------------------
 def start_game():
@@ -208,8 +232,9 @@ def start_game():
     players = [input(f"👤 Spieler {i + 1}, wie heißt du? ") for i in range(player_count)]
     difficulty = get_valid_difficulty()
     rounds = get_players("🔁 Wie viele Runden möchtest du spielen? ")
-
-    country_data = get_country_data()
+    user_patience = get_waiting_time()
+    country_data = get_country_data(user_patience)
+    print()
     country_names = list(country_data.keys())
     score = {player: 0 for player in players}
 

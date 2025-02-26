@@ -10,3 +10,6 @@ html.parser
 pandas
 bs4
 climage
+asyncio
+aiohttp
+re
