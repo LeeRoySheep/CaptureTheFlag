@@ -344,6 +344,16 @@ if __name__ == "__main__":
 📜 Endprotokoll: Capture the Flag - Flaggen-Quiz
 Dieses Dokument beschreibt die wichtigsten Funktionen und den Ablauf des Spiels Capture the Flag - Flaggen-Quiz .
 
+🛠 Programmierung von:
+👨‍💻 **Alexander Thielemeier**
+👩‍💻 **Sadia Aschrafi**
+👨‍💻 **Nicolas Heyer**
+👨‍💻 **Leroy Stevenson**
+👨‍💻 **Joshua Paoletti**
+
+Co-Programmierer & Mentor:
+🧑‍🏫 **Ishan Rastogi**
+
 🛠 Funktionen
 1️⃣ get_points_population(Benutzerschätzung, richtige_Antwort)
 
@@ -353,6 +363,51 @@ correct_answer(int) – Die tatsächliche Einwohnerzahl
 Rückgabe:
 Punkte (int), basierend auf der Genauigkeit der Schätzung
 
+2️⃣ Länderdaten abrufen (`get_country_data(timeout=10))
+Lädt die Länderinformationen (Name, Hauptstadt, Bevölkerung, Flaggen-URL) a
 
+Parameter:
+timeout(int, optional) – Maximale Wartezeit für den aufbau der 10 sec
+Rückgabe:
+Wörterbuch mit Ländern und deren Details ( name, capital, population, `flaggen)
 
+3️⃣ Highscore speichern (`ssave_highscore(name, score))
+Speichert den Highscore eines Spielers in einer SQLite-Datenbank.
+
+Parameter:
+name(str) – Name des Spielers
+score(int) – Erzielte punkte
+
+4️⃣ Beste Highscores abrufen (`get_top_highscores(get_top_highscores(limit=5))
+Liest die besten Spielergebnisse aus der Highscore-Datenbank.
+
+Parameter:
+limit(int, optional) – Anzahl der angezeigten Highscore
+Rückgabe:
+Liste der besten Spielergebnisse als Tupel ( (player_name, score))
+
+5️⃣ Spielregeln anzeigen ( show_rules())
+Liest die Spielregeln aus einer Datei ( rules.txt) und gibt sie im Terminal aus.
+
+6️⃣ Spiel starten ( start_game())
+Der Hauptprozess des Spiels, in allen Teilen
+
+🕹️ Spielablauf
+1️⃣ Der Spieler gibt an, wie viele Personen mitspielen.
+2️⃣ Jeder Spieler gibt seinen Namen ein.
+3️⃣ Der Schwierigkeitsgrad wird gewählt:
+
+🟢 Anfänger-Modus (Multiple-Choice-Fragen)
+🔴 Pro-Modus (Freitext,Zahlen)
+4️⃣ Die Anzahl der Runden wird festgelegt.
+5️⃣ **In jeder Runde muss die SpIn jeder Runde müssen die Spieler:
+Das Land anhand der Flagge erraten.
+Die Hauptstadt nennen.
+Die ungefähre Einwohnerzahl schätzen.
+6️⃣ Am Ende wird der Sieger bestimmt und die besten Highscores werden gespeichert.
+
+🏆 Highscore-System
+Die besten Ergebnisse aller Zeiten werden in einer SQLite-Datenbank geladen
+Nach jedem Spiel werden die Top 5 Spieler angezeigt.
+Falls ein Spieler einen Highscore erreicht, wird dies hervorgehoben.
 """
