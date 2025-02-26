@@ -6,13 +6,32 @@ import time
 
 
 class CountryInfo:
-    def __init__(self, country_name):
+    def __init__(self, country_name='Venezuela', country_list=['Mexiko', 'Deutschland', 'Spanien']):
         """
         Initialize CountryInfo with a given country name.
         """
+        self.country_list = country_list
         self.country_name = country_name
         self.capital_city = None
         self.inhabitants = None
+        self.country_info_dict = self.fetch_all_countries(self.country_list)
+    
+    
+    async def fetch_all_countries(self, country_list):
+        """
+        Asynchronously fetches Wikipedia data for all countries in parallel.
+        """
+        async with aiohttp.ClientSession() as session:
+            tasks = [CountryInfo(country).fetch_country_info(session) for country in country_list]
+            results = await asyncio.gather(*tasks)
+
+            for i, country in enumerate(country_list):
+                if results[i] and results[i].capital_city and results[i].inhabitants:
+                    self.set_capital_city(results[i].capital_city)
+                    self.set_inhabitants(results[i].inhabitants)
+                    self.country_info_dict[country] = {"capital_city": self.get_capital_city, "inhabitants": self.get_inhabitants}
+            return self.country_info_dict
+
 
     async def fetch_country_info(self, session):
         """
