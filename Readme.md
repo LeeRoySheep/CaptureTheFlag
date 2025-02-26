@@ -9,17 +9,19 @@ Zum installieren kopieren Sie dies in ihre Python Console um alle Pakete zu inst
 
  from your working folder or the folder where you want to store Capture the flag
 
-## Usage and/or Rules
-
- Capture is a round based quiz fetching flags from the wikipedia and other quiz related Data.
- For Correct answers you get Points and for false answers the maximum Points to win get less.
- You can Play with 1 Player in Version 0.1, but we are planning to open you a multiplayer quiz game in Version 1.0
+## Abstract
+"Capture the flag" ist ein Rundenbasierendes Ratespiel in dem Mensch ein Bild von einer Flagge eingezeigt bekommt und dazu
+das jeweilige Land erraten muss.
+Bisher gibt es 2 verschiedene Schwierigkeitsgrade, einen leichten mit verschiedenen Antwortmoeglichkeiten
+und einen professionellen, wo jede/r Spieler/in selbst eine Eingabe liefern muss.
+Es kann auch alleine gespielt werden.
 
 ## Contribution and Copyright
 
- This Game is only using quoted images and Information from Wikipedia.
- We assume it is illegal to use this game for commercial reasons.
- Still it is all open source and feel free to use the code base for your own Games or even help us develop a greater gaming experience.
+> **This Game is only using refferenced images and Information from Wikipedia.
+> We assume it is illegal to use this game for commercial reasons.
+> Still it is all open source and feel free to use the code base for your own
+> Games or even help us develop a greater gaming experience.**
 
 ## 📜 Endprotokoll: Capture the Flag - Flaggen-Quiz
 
@@ -94,10 +96,11 @@ Der Hauptprozess des Spiels, in allen Teilen
  🟢 Anfänger-Modus (Multiple-Choice-Fragen) .   
  🔴 Pro-Modus (Freitext,Zahlen) .   
  4️⃣ Die Anzahl der Runden wird festgelegt.    
- 5️⃣ **In jeder Runde muss die SpIn jeder Runde müssen die Spieler:    
-Das Land anhand der Flagge erraten.    
-Die Hauptstadt nennen.    
-Die ungefähre Einwohnerzahl schätzen.    
+ 5️⃣ In jeder Runde muss der/die SpielerIn:    
+1. Das Land anhand der Flagge erraten.    
+2. Die Hauptstadt nennen.    
+3. Die ungefähre Einwohnerzahl schätzen.
+   
 6️⃣ Am Ende wird der Sieger bestimmt und die besten Highscores werden gespeichert.    
 
 🏆 Highscore-System    
