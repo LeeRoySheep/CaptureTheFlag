@@ -24,7 +24,6 @@ class CountryInfo:
         try:
             async with session.get(url, timeout=time, ssl=False) as response:  # SSL disabled
                 if response.status != 200:
-                    print(f"❌ Error fetching {self.country_name}: HTTP {response.status}")
                     return None  # Return None for failed requests
 
                 html = await response.text()
@@ -53,7 +52,6 @@ class CountryInfo:
                             return self  # Return object with data
 
         except asyncio.TimeoutError:
-            print(f"⏳ Timeout fetching {self.country_name}")
             return None  # Return None on timeout
 
         return self  # Return even if partially filled

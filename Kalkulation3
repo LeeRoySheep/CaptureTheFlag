@@ -1,3 +1,7 @@
+# ========================================
+# 🏳️‍🌈 CAPTURE THE FLAG - FLAGGEN-QUIZ
+# ========================================
+
 import random
 import urllib.request
 import json
@@ -6,21 +10,25 @@ from io import BytesIO
 import requests
 import sqlite3
 import sys
-import html_handler_ai_improved as handle
+import html_handler_v3 as handle
 import climage
 from File_Handler import FileHandler as f_handle
 import asyncio
 
 
-# ---------Berechnungen im Programmablauf
+# =========================================================
+# 🎯 FUNKTION ZUR BEWERTUNG DER BEVÖLKERUNGS-SCHÄTZUNG
+# =========================================================
+
 def get_points_population(user_guess, correct_answer):
-    '''
-    function that calculates the diversion between answer and real value
-    and returns points calculated by diversion as float to arounded integer
-    param1: user_guesss
-    param2: correct_answer
-    return: 10 >= int(10 * diversion) >= 0
-    '''
+    """
+    Berechnet die Abweichung zwischen geschätzter und tatsächlicher Bevölkerungszahl
+    und gibt entsprechende Punkte zurück.
+
+    Param1: user_guess - geschätzte Einwohnerzahl
+    Param2: correct_answer - tatsächliche Einwohnerzahl
+    Rückgabe: Punkte als Integer zwischen 0 und 10
+    """
     diversion = float(user_guess/correct_answer)
     if diversion <= 1:
         return int(10 * diversion)
@@ -32,7 +40,10 @@ def get_points_population(user_guess, correct_answer):
             return 0
 
 
-# ------------------------ Datenbank für Highscores ------------------------
+# =========================================================
+# 🏆 HIGHSCORE-DATENBANK
+# =========================================================
+
 def create_highscore_db():
     """
     Erstellt die SQLite-Datenbank für die Highscores,
@@ -53,10 +64,10 @@ def create_highscore_db():
 
 def save_highscore(player_name, score):
     """
-    function that checks for new highscores at end of game and
-    saves the score and player name to a sqlite3 based database
-    param1: player_name
-    param2: score
+    Speichert den Highscore eines Spielers in der SQLite-Datenbank.
+
+    Param1: player_name - Name des Spielers
+    Param2: score - Erzielte Punktzahl
     """
     conn = sqlite3.connect('highscores.db')
     c = conn.cursor()
@@ -67,10 +78,10 @@ def save_highscore(player_name, score):
 
 def get_top_highscores(limit=5):
     """
-    function to read the highscores from a sqlite3 based database
-    and returns them as list of tuples
-    param1: limit with default value 5
-    return: top_scores
+    Ruft die besten Highscores aus der Datenbank ab.
+
+    Param1: limit - Anzahl der anzuzeigenden Highscores (Standard: 5)
+    Rückgabe: Liste der besten Spieler mit ihren Punktzahlen
     """
     conn = sqlite3.connect('highscores.db')
     c = conn.cursor()
@@ -80,16 +91,17 @@ def get_top_highscores(limit=5):
     return top_scores
 
 
-# ------------------------ Länder-Daten abrufen ------------------------
+# =========================================================
+# 🌍 LÄNDER-DATEN ABRUFEN
+# =========================================================
+
 def get_country_data(timeout=10):
     """
-    function to create a dictionary of dictionaries with
-    main keys as 'name' of countries, each refering to a dictionary
-    of 'flag_url' key refering to an url refering to flag image as '.png',
-    both extracted from a '.json' file.
-    And population as key for number of inhabitants and capital_city as key for the 
-    capital city in the country, both extracted from Wikipedia.
-    return: countries_dict 
+    Erstellt ein Wörterbuch mit Länderinformationen (Name, Hauptstadt, Bevölkerung, Flagge).
+    Die Daten stammen aus einer API und Wikipedia.
+
+    Param1: timeout - Maximale Wartezeit für die Datenabfrage (in Sekunden)
+    Rückgabe: Dictionary mit Länderinformationen
     """
     url = "https://restcountries.com/v3.1/all"
     try:
@@ -100,12 +112,14 @@ def get_country_data(timeout=10):
 
         country_dict = {}
         country_flag_dict = {}
+        
+        # Daten aus der API abrufen
         for country in data:
             name = country.get("translations").get("deu").get("common") #country.get('name', {}).get('common', 'Unbekannt')
             flag_url = country.get('flags', {}).get('png', 'Keine Flagge verfügbar')
             country_flag_dict[name] = flag_url
         try:
-            #using asyncio for faster extraktion of data 
+            # Asynchrones Abrufen der Wikipedia-Daten
             successful_extractions = asyncio.run(handle.fetch_all_countries([*country_flag_dict.keys()],timeout))[0]
             for country, capital, population in successful_extractions:
                 country_dict[country] = {"capital": capital, 'population': population, "flag": country_flag_dict[country]}
@@ -123,19 +137,21 @@ def get_country_data(timeout=10):
         return {}
 
 
-# ------------------------ Spielregeln ------------------------
+# =========================================================
+# 📜 SPIELREGELN ANZEIGEN
+# =========================================================
+
 def show_rules():
-    '''
-    void function printing rules to Terminal saved in rules.txt
-    '''
+    """
+    Gibt die Spielregeln aus einer Datei im Terminal aus.
+    """
     print(f_handle('rules.txt').txt_file_to_str())
 
 
 def ask_for_rules():
-    '''
-    void function to that asks for player input and prints rules 
-    if wanted by player
-    '''
+    """
+    Fragt den Spieler, ob er die Regeln sehen möchte, und zeigt sie gegebenenfalls an.
+    """
     while True:
         try:
             rules_choice = input("📋 Möchtest du die Spielregeln sehen? (Ja/Nein): ").strip().lower()
@@ -151,13 +167,16 @@ def ask_for_rules():
 
 def exit_game():
     """
-    void function to end game any time
+    Beendet das Spiel.
     """
     print("🚪 Spiel wird beendet. Danke fürs Spielen!")
     sys.exit()
 
 
-# ------------------------Spieler------------------------
+# =========================================================
+# 👥 SPIELER-EINGABEN
+# =========================================================
+
 def get_players(prompt):
     '''
     function to get number of players form user as integer
@@ -178,17 +197,27 @@ def get_players(prompt):
             print("⚠️ Ungültige Eingabe. Bitte eine Zahl eingeben oder 'exit' zum Beenden.")
 
 
-# ---------------------Schwierigkeitsgrad---------------------
+# =========================================================
+# 🎮 Schwierigkeitsgrad
+# =========================================================
+
 def get_valid_difficulty():
     """
-    function that returns 1 for multiple choice answers
-    and 2 for free text input as answer for profesional players
-    retrun: difficulty
+    Funktion zur Auswahl des Schwierigkeitsgrads.
+    Gibt 1 für Multiple-Choice-Antworten zurück (Anfänger-Modus).
+    Gibt 2 für freie Texteingabe zurück (Profi-Modus).
+
+    Rückgabe:
+    - difficulty (str): '1' für Anfänger, '2' für Pro.
     """
     while True:
         difficulty = input("💡 Wähle den Schwierigkeitsgrad (1 = Anfänger | 2 = Pro): ").strip()
+        
+        # Möglichkeit, das Spiel jederzeit zu verlassen
         if difficulty.lower() == "exit":
             exit_game()
+        
+        # Überprüfung auf gültige Eingabe
         if difficulty in ["1", "2"]:
             return difficulty
         else:
@@ -197,10 +226,8 @@ def get_valid_difficulty():
 
 # Funktion um die Warteit zu verkürzen oder die Genauigkeit zu erhöhen
 def get_waiting_time():
-    """
-    function to determine waiting time by user input
-    return: time
-    """
+    """ Funktion zur Ermittlung der Wartezeit durch Benutzereingabe return: Zeit """
+    
     while True:
         time = input(" Da einige Daten von Wikipedia aufgerufen werden,\n"
             + " kann es fuer einzelne Daten zu sehr langen Wartezeiten kommen.\n"
@@ -219,12 +246,15 @@ def get_waiting_time():
             print("Wie es scheint haben Sie sich vertippt! Bitte versuchen Sie es erneut.")
 
 
-# ------------------------ Spielstart ------------------------
+# =========================================================
+# 🎮 SPIELSTART
+# =========================================================
+
 def start_game():
-    '''
-    void main function to arrange the game handling of input and output 
-    and back end functions
-    '''
+    """
+    Hauptfunktion des Spiels. Fragt die Spieleranzahl, Runden und den Schwierigkeitsgrad ab.
+    Danach wird das Quiz mit Flaggen, Hauptstädten und Bevölkerungszahlen gespielt.
+    """
     print("\n🌎 Willkommen bei Capture the Flag - Flaggen-Quiz!")
     ask_for_rules()
 
@@ -269,7 +299,7 @@ def start_game():
                 random.shuffle(capital_choices)
                 for j, choice in enumerate(capital_choices, 1):
                     print(f"{j}. {choice}")
-                capital_answer = input("🏙️ Wähle die richtige Hauptstadt: ")
+                capital_answer = input("🏙️ Wähle die richtige Hauptstadt: ")# Fehler f[r falsche eingaben abfangen]
                 if capital_choices[int(capital_answer) - 1] == capital:
                     score[player] += 10
                     print("✅ Richtig!")
@@ -334,44 +364,18 @@ if __name__ == "__main__":
 
 
 """
-# Endprotokoll: Capture the Flag - Flaggen-Quiz
+📜 Endprotokoll: Capture the Flag - Flaggen-Quiz
+Dieses Dokument beschreibt die wichtigsten Funktionen und den Ablauf des Spiels Capture the Flag - Flaggen-Quiz .
 
-Dieses Endprotokoll beschreibt die wichtigsten Funktionen des Spiels *Capture the Flag - Flaggen-Quiz* sowie deren Funktionsweise.
+🛠 Funktionen
+1️⃣ get_points_population(Benutzerschätzung, richtige_Antwort)
 
-## Funktionen
+Parameter:
+user_guess(int) – Die geschätzte Einwohnerzahl
+correct_answer(int) – Die tatsächliche Einwohnerzahl
+Rückgabe:
+Punkte (int), basierend auf der Genauigkeit der Schätzung
 
-### 1. **get_points_population(user_guess, correct_answer)**
-Berechnet die Punkte basierend auf der Abweichung zwischen der geschätzten und der tatsächlichen Bevölkerungszahl.
-- Parameter: `user_guess` (int), `correct_answer` (int)
-- Rückgabe: Punkte (int)
 
-### 2. **get_country_data()**
-Lädt die Länderinformationen (Name, Hauptstadt, Bevölkerung, Flaggen-URL) aus der API https://restcountries.com/v3.1/all.
-- Rückgabe: Dictionary mit Ländern und deren Details
 
-### 3. **save_highscore(name, score)**
-Speichert den Highscore eines Spielers in der Liste `highscores`.
-- Parameter: `name` (str), `score` (int)
-
-### 4. **display_highscores()**
-Zeigt die Top 10 Highscores in absteigender Reihenfolge an.
-
-### 5. **start_game(simulated_input=None)**
-Der Hauptprozess des Spiels, der die Anzahl der Spieler, Runden und den Schwierigkeitsgrad abfragt. Es zeigt zufällig gewählte Länderflaggen an, fordert den Spieler auf, das Land, die Hauptstadt und die ungefähre Bevölkerungszahl zu erraten.
-- Parameter: `simulated_input` (list, optional) für Testzwecke
-
-### Ablauf
-1. Der Spieler wählt die Anzahl der Spieler.
-2. Jeder Spieler gibt seinen Namen ein.
-3. Der Spieler wählt den Schwierigkeitsgrad (1 = Anfänger, 2 = Pro).
-4. Der Spieler wählt die Anzahl der Runden.
-5. Für jede Runde:
-    - Die Flagge eines zufälligen Landes wird angezeigt.
-    - Der Spieler rät das Land, die Hauptstadt und die Einwohnerzahl.
-6. Am Ende des Spiels werden die Punkte angezeigt und in die Highscore-Liste eingetragen.
-
-### Fehlerbehandlung
-- Ungültige Eingaben werden abgefangen.
-- Fehlt die API-Antwort, wird das Spiel abgebrochen.
-- Das Programm berücksichtigt, dass die Bevölkerungszahl möglicherweise nicht genau erraten wird.
 """

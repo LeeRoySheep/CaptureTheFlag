@@ -1,9 +1,5 @@
 PIL
 requests
-PyQt6
-QtGui
-QtCore
-QtWidgets
 urllib.request
 sqlite3
 html.parser
@@ -12,4 +8,4 @@ bs4
 climage
 asyncio
 aiohttp
-re
+r
