@@ -37,32 +37,63 @@ class CountryInfo:
 
                 # Check for "Hauptstadt" (capital city)
                 if "hauptstadt" in header_text:
-                    self.capital_city = cells[1].get_text(strip=True)
+                    capital = cells[1].get_text(strip=True)
+                    if type(capital) == type('a'):
+                        self.set_capital_city(capital)
+                    else:
+                        raise NameError(f"No capital city found for {self.country_name}")
 
                 # Check for "Einwohnerzahl" (population)
                 if "einwohner" in header_text:
-                    self.inhabitants = self.clean_population(cells[1].get_text(strip=True))
+                    self.set_inhabitants(self.clean_population(cells[1].get_text(strip=True)))
 
                 # Stop searching if both values are found
                 if self.capital_city and self.inhabitants:
-                    break
+                    return
+
 
     def clean_population(self, population_text):
         """
         Extracts and cleans population data, returning it as an integer.
         """
         numbers = re.findall(r'\d+', population_text)  # Extract only digits
-        if numbers:
-            return int("".join(numbers))  # Combine and convert to integer
-        raise ValueError("No Value for inhabitants in html handler.py")
+        numbers = int("".join(numbers))  # Combine and convert to integer
+        if type(numbers) == type(int(1)):
+            return numbers
+        else:
+            raise TypeError("Wrong type or None type for inhabitants in html handler.py")
+
 
     def get_capital_city(self):
-        """Returns the capital city."""
+        """
+        Returns the capital city of the object
+        return: self.capital_city
+        """
         return self.capital_city
+    
+
+    def set_capital_city(self, capital_city):
+        """
+        standard setter method to set the capital city for an CountryInfo object
+        param: capital_city
+        """
+        self.capital_city = capital_city
+
 
     def get_inhabitants(self):
-        """Returns the population as an integer."""
+        """
+        Returns the population as an integer.
+        return: self.inhabitants
+        """
         return self.inhabitants
+    
+
+    def set_inhabitants(self, inhabitants):
+        """
+        function to set number of inhabitants variable in CountryInfo object
+        param: inhabitants
+        """
+        self.inhabitants = inhabitants
 
 
 # Example Usage:

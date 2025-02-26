@@ -104,18 +104,23 @@ def get_country_data():
         for country in data:
             try:
                 name = country.get("translations").get("deu").get("common") #country.get('name', {}).get('common', 'Unbekannt')
-                capital = handle.CountryInfo(name).get_capital_city() #country.get('capital', ['Unbekannt'])[0]
-                population = country.get('population', 'Unbekannt')
+                country_object = handle.CountryInfo(name)
+                capital = country_object.get_capital_city() #country.get('capital', ['Unbekannt'])[0]
+                population = country_object.get_inhabitants()
                 flag_url = country.get('flags', {}).get('png', 'Keine Flagge verfügbar')
                 country_dict[name] = {'capital': capital, 'population': population, 'flag': flag_url}
             except NameError as false_name:
-                print("Creating dictionary from Wikipedia please wait!")
+                print(false_name, "\nCreating dictionary from Wikipedia please wait!")
+                continue
             except TypeError as type_err:
-                print(type_err)
+                print(type_err,"\nDictionary for quiz still loading please be patient!")
+                continue
             except ValueError as val_err:
-                print(val_err)
+                print(val_err,"\nDictionary still loading please wait!")
+                continue
             except RuntimeError as page_not_found:
-                print(f"Wikipage for country {name} not found! Dictionary still loading!")
+                print(f"Wikipage for country {name} not found!\nDictionary still loading!")
+                continue
         print(len(country_dict))
         return country_dict
     except Exception as e:
@@ -133,7 +138,7 @@ def show_rules():
 
 def ask_for_rules():
     '''
-    function to that asks for player input and prints rules 
+    void function to that asks for player input and prints rules 
     if wanted by player
     '''
     while True:
@@ -180,7 +185,9 @@ def get_players(prompt):
 # ---------------------Schwierigkeitsgrad---------------------
 def get_valid_difficulty():
     """
-    function
+    function that returns 1 for multiple choice answers
+    and 2 for free text input as answer for profesional players
+    retrun: difficulty
     """
     while True:
         difficulty = input("💡 Wähle den Schwierigkeitsgrad (1 = Anfänger | 2 = Pro): ").strip()
@@ -195,6 +202,10 @@ def get_valid_difficulty():
 
 # ------------------------ Spielstart ------------------------
 def start_game():
+    '''
+    void main function to arrange the game handling of input and output 
+    and back end functions
+    '''
     print("\n🌎 Willkommen bei Capture the Flag - Flaggen-Quiz!")
     ask_for_rules()
 
