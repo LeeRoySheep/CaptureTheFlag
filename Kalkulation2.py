@@ -12,7 +12,7 @@ from File_Handler import FileHandler as f_handle
 import asyncio
 
 
-# -----functoin to give points for population gase by diversion-----
+# ---------Berechnungen im Programmablauf
 def get_points_population(user_guess, correct_answer):
     '''
     function that calculates the diversion between answer and real value
@@ -287,6 +287,7 @@ def start_game():
                     print("✅ Richtig!")
                 else:
                     print(f"❌ Falsch! Die richtige Antwort war {population}.")
+            # -------------Pro-Handling
             else: 
                 country_answer = input("🌍 Nenne das Land zur Flagge: ")
                 if country_answer.strip().lower() == country.lower():
