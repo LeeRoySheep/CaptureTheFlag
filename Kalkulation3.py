@@ -1,14 +1,13 @@
 # ========================================
 # 🏳️‍🌈 CAPTURE THE FLAG - FLAGGEN-QUIZ
 # ========================================
-
+import asyncio
 import random
 import urllib.request
 import json
 import sqlite3
 import html_handler_v3 as handle
 from File_Handler import FileHandler as f_handle, smooth_image
-import asyncio
 from Input_Handler import check_int_input, exit_game
 
 

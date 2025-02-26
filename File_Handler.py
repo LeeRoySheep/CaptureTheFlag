@@ -1,8 +1,9 @@
 from PIL import Image, ImageFilter
+import climage
 import requests
 from io import BytesIO
 
-##-----------png aus URL in relativ glates Terminal Bild verwandeln----###
+##----------------png aus URL in relativ glates Terminal Bild verwandeln--------------###
 def smooth_image(
     URL
     ="https://upload.wikimedia.org/wikipedia/commons"
@@ -16,25 +17,23 @@ def smooth_image(
     response = requests.get(flag_url)
     img = Image.open(BytesIO(response.content))
 
-    # 1. Konvertieren zu CMYK (Richer colors)
+    # Konvertieren zu CMYK (Richer colors)
     img = img.convert("CMYK").convert("RGB")
 
-    # 2. Gauschscher unschaerfe Filter
-    img = img.filter(ImageFilter.GaussianBlur(0.3))  # Wenn noetig kann die unschaerfe angepasst werden
+    # Gauschscher unschaerfe Filter
+    img = img.filter(ImageFilter.GaussianBlur(0.1))  # Wenn noetig kann die unschaerfe angepasst werden
 
-    # 3. Hochaufloesende verkleinerung LANCZOS (high-quality downscaling)
-    new_width = 5000  # breite anpassen um optimale qualitaet zu finden
+    # Hochaufloesende verkleinerung LANCZOS (high-quality downscaling)
+    new_width = 5230 # breite anpassen um optimale qualitaet zu finden
     aspect_ratio = img.height / img.width
     new_height = int(new_width * aspect_ratio)
     img = img.resize((new_width, new_height), Image.LANCZOS)
 
+    # in Terminal freundliches Format umwandeln
+    output = climage.convert_pil(img, is_unicode=True, width=76)
+    print(output)
 
-    # 5. in Terminal freundliches Format umwandeln
-    sixel_data = pysixel.SixelConverter().convert(img)
-    print(sixel_data)
 
-
-##----FileHandler Klasse zum auslesen aus Datein im Moment nur txt to string-----##
 class FileHandler:
     def __init__(self, file_path=None):
         '''
@@ -64,4 +63,4 @@ def main():
 #dunder main for testing
 if __name__ == "__main__":
     main()
-    smooth_Image()
+    smooth_image()
