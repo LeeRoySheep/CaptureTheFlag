@@ -1,5 +1,4 @@
 asyncio
-sqlite3
 PIL
 climage
 requests
