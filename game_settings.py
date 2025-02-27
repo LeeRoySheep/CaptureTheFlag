@@ -3,6 +3,7 @@ from PyQt6.QtWidgets import (
     QApplication, QWidget, QPushButton, QLabel, QVBoxLayout, QHBoxLayout, QGridLayout, QLineEdit, QSpinBox, QComboBox
 )
 from PyQt6.QtCore import Qt
+from question_window import QuestionWindow  # Import the QuestionWindow class
 
 class GameSettingsWindow(QWidget):
     def __init__(self):
@@ -58,6 +59,7 @@ class GameSettingsWindow(QWidget):
         # Commit Button
         self.btn_commit = QPushButton("Start Game")
         self.btn_commit.setStyleSheet("font-size: 16px; padding: 10px;")
+        self.btn_commit.clicked.connect(self.start_game)
         
         # Add Layouts to Main Layout
         main_layout.addLayout(settings_layout, 1)
@@ -82,6 +84,12 @@ class GameSettingsWindow(QWidget):
             self.grid_layout.addWidget(label, i, 0)
             self.grid_layout.addWidget(input_field, i, 1)
             self.player_inputs.append(input_field)
+    
+    def start_game(self):
+        # Example: Open the QuestionWindow with a sample question
+        self.question_window = QuestionWindow("https://example.com/sample.png", "What is the capital of France?", ["Paris", "London", "Berlin", "Madrid"])
+        self.question_window.show()
+        self.close()
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
