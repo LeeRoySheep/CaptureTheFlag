@@ -3,3 +3,4 @@ climage
 requests
 bs4
 aiohttp
+lxml
