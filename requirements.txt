@@ -1,5 +1,4 @@
 asyncio
-PIL
 climage
 requests
 bs4
