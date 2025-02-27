@@ -1,5 +1,5 @@
 asyncio
-urllib.request
+urllib
 json
 sqlite3
 PIL
