@@ -1,5 +1,4 @@
 asyncio
-urllib
 json
 sqlite3
 PIL
