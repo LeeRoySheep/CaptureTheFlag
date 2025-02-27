@@ -6,11 +6,15 @@ import random
 import urllib.request
 import json
 import sqlite3
+import sys
+from PyQt6.QtWidgets import (
+    QApplication, QWidget, QPushButton, QLabel, QVBoxLayout,
+    QRadioButton, QButtonGroup, QLineEdit
+    )
 import html_handler_v3 as handle
 from File_Handler import FileHandler as f_handle, smooth_image
 from Input_Handler import check_int_input, exit_game
-import GUIQTFlagsQuiz as GUI_Window
-
+from question_window import QuestionWindow
 
 # =========================================================
 # 🎯 FUNKTION ZUR BEWERTUNG DER BEVÖLKERUNGS-SCHÄTZUNG
@@ -216,18 +220,15 @@ def get_valid_difficulty():
 # 🎮 SPIELSTART
 # =========================================================
 
-def start_game():
+def start_game(gui_players, gui_rounds, gui_difficulty):
     """
     Hauptfunktion des Spiels. Fragt die Spieleranzahl, Runden und den Schwierigkeitsgrad ab.
     Danach wird das Quiz mit Flaggen, Hauptstädten und Bevölkerungszahlen gespielt.
     """
-    print("\n🌎 Willkommen bei Capture the Flag - Flaggen-Quiz!")
-    ask_for_rules()
-
-    player_count = get_players("👥 Wie viele Spieler spielen mit? ")
-    players = [input(f"👤 Spieler {i + 1}, wie heißt du? ") for i in range(player_count)]
-    difficulty = get_valid_difficulty()
-    rounds = get_players("🔁 Wie viele Runden möchtest du spielen? ")
+   
+    players = gui_players
+    difficulty = gui_difficulty
+    rounds = gui_rounds
     country_data = get_country_data()
     score = {player: 0 for player in players}
 
@@ -241,10 +242,9 @@ def start_game():
             # inform of ANSI Escape codes 
             #img = Image.open(BytesIO(requests.get().content)).convert("CMYK").convert("RGB")#.show()
             #output = climage.convert_pil(img, is_unicode=True, width=60)
-            first_question = f"Spieler: {player}, deine Flagge:\n")
+            first_question = f"Spieler: {player}, deine Flagge:\n"
             #print(output)
-            if in_terminal:
-            smooth_image(flag_url)
+            
 
             capital = country_data[country]['capital']
             population = country_data[country]['population']
@@ -252,9 +252,13 @@ def start_game():
             if difficulty == "1":
                 country_choices = random.sample(country_names, 3) + [country]
                 random.shuffle(country_choices)
+                question = "🌍 Wähle das richtige Land:"
                 for j, choice in enumerate(country_choices, 1):
                     print(f"{j}. {choice}")
-                print("🌍 Wähle das richtige Land:")
+                app = QApplication(sys.argv)
+                window = QuestionWindow(flag_url, question, country_choices, players, rounds, gui_difficulty)
+                window.show()
+                sys.exit(app.exec())
                 country_answer = check_int_input(min=1,max=4)
                 if country_choices[int(country_answer) - 1] == country:
                     score[player] += 10
@@ -331,7 +335,7 @@ def start_game():
 
 if __name__ == "__main__":
     create_highscore_db()
-    start_game()
+    #start_game()
 
 
 

@@ -8,8 +8,11 @@ from PyQt6.QtGui import QPixmap
 from io import BytesIO
 
 class QuestionWindow(QWidget):
-    def __init__(self, image_url, question_text, answers=None):
+    def __init__(self, image_url, question_text, players, rounds, scores, answers=None):
         super().__init__()
+        self.players = players
+        self.rounds = rounds
+        self.scores = scores
         self.setWindowTitle("Question")
         self.setGeometry(300, 200, 600, 400)
         

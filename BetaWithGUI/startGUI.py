@@ -79,7 +79,7 @@ class QuizApp(QWidget):
             self.game_settings_window.show()
         else:
             self.game_settings_window.raise_()
-
+            
     def show_rules(self):
         try:
             with open(RULES_FILE, "r", encoding="utf-8") as file:
